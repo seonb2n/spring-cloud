@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Map;
 
 @Slf4j
@@ -18,11 +19,13 @@ public class FileService {
         try{
             log.info("file copy complete");
             log.info("file save complete");
-            FileEvent.toCompleteEvent(data);
+            FileEvent completeEvent = FileEvent.toCompleteEvent(data);
+            fileEventPublisher.notifyComplete(completeEvent);
 
         } catch (Exception e) {
             log.error("file upload fail", e);
-            FileEvent.toErrorEvent(data);
+            FileEvent errorEvent = FileEvent.toErrorEvent(data);
+            fileEventPublisher.notifyError(errorEvent);
         }
     }
 }
